@@ -1,34 +1,61 @@
-import pandas as pd
-import numpy as np
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-data = pd.read_csv('raw.csv', error_bad_lines=False, sep=';')
-# data = pd.read_csv('test.csv', sep=';')
-# df1 = pd.read_csv("http://pythonhow.com/wp-content/uploads/2016/01/Income_data.csv")
+import csv
+import nltk
+from pytagcloud import create_tag_image, make_tags
+from pytagcloud.lang.counter import get_tag_counts
 
-for col in data.columns:
-    print data[col]
+# stop = set(nltk.corpus.stopwords.words('french'))
+stop = set([i.lower() for i in ["sarl", "monsieur", "madame", "Aaron","Abdon","Abel","Abélard","Abelin","Abondance","Abraham","Absalon","Acace","Achaire","Achille","Adalard","Adalbald","Adalbéron","Adalbert","Adalric","Adam","Adegrin","Adel","Adelin","Andelin","Adelphe","Adenet","Adéodat","Adhémar","Adjutor","Adolphe","Adonis","Adon","Adrien","Vénétie","Agapet","Agathange","Agathon","Agilbert","Agénor","Agnan","Aignan","Agrippin","Aimable","Aimé","Alain","indo-européen","Alban","Albin","Aubin","Albéric","Albert","Albertet","Alcibiade","Alcide","Alcée","Alcime","Aldonce","Aldric","Aldéric","Aleaume","Alexandre","Alexis","Alix","Alliaume","Aleaume","Almine","Almire","Aloïs","Alphée","Alphonse","Alpinien","Alverède","Amalric","Amaury","Amandin","Amant","Ambroise","Amédée","latins","Amélien","Amiel","Amour","Anaël","Anastase","Anatole","Ancelin","Andéol","Andoche","André","Andoche","Ange","Angelin","Angilbe","Anglebert","Angilran","Angoustan","Anicet","Anne","Annibal","Ansbert","Anselme","Anthelme","Antheaume","Anthime","Antide","Antoine","Antonius","Antonin","Apollinaire","Apollon","Aquilin","Arcade","Archambaud","Archambeau","Archange","Archibald","Arian","Ariel","Ariste","Aristide","Armand","Armel","celtique","Armin","Arnould","Arnaud","Arolde","Arsène","Arsinoé","Arthaud","Arthème","Arthur","celtique","Ascelin","Athanase","Aubry","Audebert","Audouin","Audran","Audric","Auguste","Augustin","Aurèle","Aurélien","Aurian","Auxence","Axel","Aymard","Aymeric","Aymon","Aymond","Balthazar","Balthazar","Baptiste","Barnabé","Barthélemy","hébraïque","biblique","Bartimée","Basile","Bastien","Baudouin","Bénigne","Benjamin","hébraïque","biblique","Benoît","Béranger","Bérard","Bernard","Bertrand","Blaise","Bon","Boniface","Bouchard","Brice","Brieuc","Bruno","Brunon","Calixte","Calliste","Camélien","Camille","Camillien","Candide","Caribert","Carloman","Cassandre","Cassien","Cédric","vieil anglais","Céleste","Célestin","Célien","Césaire","César","Charles","Charlemagne","Charlemagne","Childebert","Chilpéric","Chrétien","Christian","Christodule","Christophe","Chrysostome","Jean Chrysostome","Clarence","Claude","Claudien","Cléandre","Clément","Clotaire","Clovis","Côme","Constant","Constantin","Corentin","Quimper","Cyprien","Cyriaque","Cyrille","Cyril","Damien","Daniel","David","Delphin","Denis","Désiré","Didier","Dieudonné","Dimitri","Dominique","Dorian","Dorothée","Dove","Edgard","Edmond","Édouard","anglo-saxon","Éleuthère","Élie","Élisée","Émeric","Émile","Émilien","Emmanuel","Épiphane","Éric","Ernest","Étienne","Eubert","Eudes","cas sujet","Eudoxe","Eugène","Eusèbe","Eustache","Évariste","Évrard","Fabien","Fabrice","Falba","Félicité","Félix","Ferdinand","Fiacre","Fidèle","Firmin","Flavien","Flodoard","Florent","Florentin","Florian","Fortuné","Foulques","Francisque","François","franciscus","Francs","Frédéric","Fulbert","Fulcran","Fulgence","Gabin","Gabriel","Gaël","Garnier","Gaston","Gaspard","Gatien","Gaud","Gautier","Gédéon","Gédéon","Geoffroy","Georges","Géraud","Gérard","Gerbert","Germain","Gervais","Ghislain","Gilbert","Gilles","Girart","Gislebert","Gondebaud","Gonthier","Gontran","Gonzague","Grégoire","Guérin","Gui","Guillaume","Gustave","vieux suédois","Guy","Guyot","Hardouin","Hector","grecque","Hédelin","Hélier","Henri","Herbert","Herluin","Hervé","Hilaire","Hildebert","Hincmar","Hippolyte","Honoré","Hubert","Hugues","Innocent","Isabeau","Isidore","Jacques","Japhet","Jason","Jean","Jeannel","Jeannot","Jérémie","Jérôme","Joachim","Joanny","Job","Jocelyn","Joël","Johan","Jonas","Jonathan","Joseph","Josse","Josselin","Jourdain","Jude","Judicaël","Jules","Julien","Juste","Justin","Lambert","Landry","Laurent","Lazare","Lazare de Béthanie","Léandre","Léon","Léonard","Léopold","Leu","loup","Leufroy","Libère","Libère","Liétald","Bretagne","Lionel","Loïc","Longin","Longin le Centurion","Lorrain","Lorraine","Lothaire","Louis","Saint Louis","Loup","Luc","Lucas","Lucien","Ludolphe","Ludovic","germain","Macaire","Béatitudes","Malo","gallois","Mamert","Manassé","tribu de Manassé","Marc","Marceau","Marcel","Marcelin","Marius","Martial","Martin","Mathurin","Matthias","Mathias","Matthieu","Maugis","Maurice","Mauricet","Maxence","Maxime","Maximilien","Mayeul","Médéric","Melchior","Rois mages","Mence","Merlin","Mérovée","Michel","Moïse","Morgan","Nathan","(en)","Nathan","Nathanaël","Nathanaël","Narcisse","Naudet","Néhémie","Néhémie","Nestor","Nestor","Nicéphore","Nicolas","Noé","Noé","Noël","Noël","Norbert","Normand","Normands","Octave","Odilon","Odon","Oger","Olivier","Oury","Oxlene","Pacôme","Palémon","Paloemon","Parfait","Pascal","Paterne","Patrice","Paul","Latin","Pépin","Perceval","Philémon","Philibert","Philippe","Philothée","Pie","Pierre","Pierrick","Prosper","Quentin","Raoul","Raphaël","Raymond","Régis","Réjean","Rémi","Renaud","René","sacrement","chrétien","baptême","Reybaud","Richard","Robert","Roch","Rodolphe","Rodrigue","Roger","Roland","Romain","Romuald","Roméo","pèlerin","Rome","Ronan","Roselin","Salomon","Samuel","Sandra","Christ","Savin","Scholastique","Sébastien","Séraphin","Serge","Séverin","Sidoine","Sigebert","Sigismond","Silvère","Simon","Siméon","Sixte","Stanislas","slaves","Stéphane","Stéphan","Sylvain","Sylvestre","Tancrède","Tanguy","celtique","Taurin","Théodore","Dieu","Théodose","Dieu","Théophile","Théophraste","Thibault","Thibert","Thierry","Thomas","araméen","Timoléon","Timothée","Titien","Tonnin","Toussaint","Toussaint","Trajan","Tristan","Turold","Tim","Ulysse","Urbain","Valentin","Valère","Valéry","Venance","Venant","Venceslas","Vianney","Jean-Marie Vianney","Victor","Victorien","Victorin","Vigile","Vincent","Vital","Vitalien","Vivien","Waleran","Wandrille","Xavier","basque","Xénophon","Yves","Zacharie","Jéhovah","Zaché","Zéphirin","Haut","Abdonie","Abeline","Abigaelle","Abigaïl","Acacie","Acanthe","Adalbaude","Adalsinde","Adegrine","Adélaïde","Adèle","Adélie","Adeline","Adeltrude","Adolphie","Adonise","Adrastée","Adrehilde","Adrienne","Agathe","Agilberte","Aglaé","Agnane","Agneflète","Agnès","Agrippine","Aimée","Alaine","1","Albane","Albérade","Alberte","Alcidie","Alcine","Orlando furioso","Ludovico Ariosto","Alcyone","Aldegonde","Aleth","Alexandrine","Alexine","Alice","Aliénor","Aliette","Aline","Alix","Alizé","castillan","Aloïse","Aloyse","Alphonsine","Althée","Amaliane","Amalthée","Amande","Amandine","Amante","Amarande","Amaranthe","Amaryllis","Ambre","Ambroisie","Améliane","Amélie","Améthyste","Aminte","Torquato Tasso","Anaëlle","Anaïs","Anastasie","Anatolie","Anceline","Andrée","Anémone","Angadrême","Angèle","Angeline","Angélique","Angilberte","Anicée","Anicette","Annabelle","Anne","Annette","Annick","Annie","Annonciade","Ansberte","Anstrudie","Anthelmette","Antigone","Antoinette","Antonine","Aphélie","Apolline","Apollonie","Aquiline","Arabelle","Arcadie","Archange","Argine","Ariane","Aricie","Ariel","Arielle","Arlette","Armance","Armande","Armandine","Armeline","Armide","Torquato Tasso","Armelle","Armine","Arnaude","Arsènie","Arsinoé","Artémis","Arthurine","Asceline","Ascension","Ascension du Christ","Assomption","Assomption de Marie","Astarté","Astérie","Astrée","Astride","Athalie","Athanasie","Athénaïs","Athina","Aube","Aubertine","Aude","Audeline","Audrey","celtique","Augustine","Aure","Aurélie","Aurélienne","Aurelle","Auriane","Aurore","Aurora","Auxane","Aveline","Avigaëlle","Avoye","Axeline","Axelle","Aymardine","Aymonde","Azalée","Azélie","Azeline","Barbe","Basilisse","Bathilde","Béatrice","Béatrix","Bénédicte","Bérangère","Bernadette","Berthe","Bertille","Beuve","Blanche","blanc","Blandine","Brigitte","celtique","Brunehaut","Brunehilde","Camille","Capucine","fleur éponyme","Carine","Caroline","Cassandre","Priam","Hécube","Catherine","Cécile","Céleste","Célestine","Céline","Séléné","Chantal","Jeanne Frémyot de Chantal","marquise de Sévigné","Charlaine","Charline","Charlotte","Chloé","Christelle","Christiane","Christine","Claire","Clara","Claude","Claudine","Clarisse","Clémence","Clémentine","Clio","Clotilde","Coline","Conception","Constance","Coralie","Coraline","Corentine","Corinne","Cyrielle","Danielle","Danièle","Daphné","Débora","Delphine","Denise","Diane","Dieudonnée","Dominique","Doriane","Dorothée","Douce","Édith","Edmée","Éléonore","Éliane","Élia","Éliette","Élisabeth","Élise","Ella","Élodie","Éloïse","Elsa","Émeline","Émérance","Émérentienne","Émérencie","Émilie","Emma","Emmanuelle","Emmelie","archive","Ernestine","Esther","Estelle","Eudoxie","Eugénie","Eulalie","Euphrasie","Eusébie","Évangéline","grecs","Éva","(en)","Ève","Évelyne","gotique","Fanny","Fantine","Faustine","Félicie","Fernande","Flavie","Fleur","Flore","Florence","Florie","Fortunée","France","Francia","Françoise","Gabrielle","Gaëlle","Garance","Geneviève","Georgette","Gerberge","Germaine","Gertrude","Gisèle","Guenièvre","Guilhemine","Guillemette","Gustavine","Gwenaëlle","Hélène","Héloïse","Henriette","Hermine","Hermione","Hippolyte","Honorine","Hortense","romaine","Huguette","Inès","Irène","Irina","Iris","Isabeau","Isabelle","Iseult","Isolde","Ismérie","Jacinthe","Jacqueline","Jade","Janine","Jeanne","Jehanne","Jocelyne","Joëlle","Joséphine","Judith","Julie","Julia","(de)","Julius Caesar","Juliette","Justine","Laura","Laure","Laureline","Laurence","Laurène","Lauriane","Laurine","Léa","Léna","Léonie","Léonne","Léontine","Lorraine","Lucie","Lucienne","Lucille","Ludivine","Lydie","Lydie de la pourpre","Mégane","Madeleine","Magali","Maguelone","Mahaut","Mallaury","Manon","Marceline","Margot","Marguerite","Marianne","Marie","Marine","Marion","Marlène","Marthe","Martine","Mathilde","Maud","Maureen","Mauricette","Maxime","Mélanie","Mélissa","Mélissandre","Mélisande","Mélodie","Michèle ou Michelle","Micheline","Mireille","Miriam","Moïsette","Monique","Morgane","Muriel","Mylène","Nadège","Nadine","Nathalie","Nicole","Nicolette","Nine","Noëlle","Noémie","Océane","Odette","Odile","Olive","Olivia","Olympe","Ombline","Ombeline","Ophélie","Oriande","Oriane","Ozanne","Pascale","Pascaline","Paule","Paulette","Pauline","Priscille","Prisca","Prisque","Pécine","Pélagie","Pénélope","Perrine","Pétronille","Philippine","Philomène","Philothée","Primerose","Prudence","Pulchérie","Quentine","Quiéta","Quitterie","Quintia","Quintilla","Rachel","Raphaëlle","Raymonde","Rebecca","Régine","Réjeanne","Renée","Rita","sainte Rita","Rolande","Romane","Rosalie","Rose","Roseline","Sabine","Romains","Rome","Salomé","Sandrine","hypocoristique","Sarah","Scholastique","Ségolène","Séverine","Rome","Byzance","empereurs","Sibylle","Simone","Sixtine","Solange","Soline","Solène","Sophie","Stéphanie","Suzanne","Sylviane","Sylvie","Tatiana","Thaïs","Théodora","Thérèse","Mer Méditerranée","Tiphaine","Ursule","Valentine","Valérie","Véronique","Victoire","Victorine","Vinciane","Violette","Virginie","Viviane","Xavière","Yolande","Ysaline","Yseult","Yvette","Yvonne","Zélie","Zita","Zoé"]])
 
-SIRENS = data['SIREN'].str.decode('iso-8859-1').str.encode('utf-8')
-NICS = data['NIC'].str.decode('iso-8859-1').str.encode('utf-8')
-BIZNAME = data['L1_NORMALISEE'].str.decode('iso-8859-1').str.encode('utf-8')
-ZIPS = data['CODPOS'].str.decode('iso-8859-1').str.encode('utf-8')
-ACTIVITIES = data['LIBAPET'].str.decode('iso-8859-1').str.encode('utf-8')
+print stop
 
-
-
-data2 = pd.DataFrame(SIRENS, columns=['SIREN'])
-data2['NICS'] = NICS
-data2['BIZNAME'] = BIZNAME
-data2['ZIPS'] = ZIPS
-data2['ACTIVITIES'] = ACTIVITIES
-
-data2 = data2.sort_values('ACTIVITIES')
+def remove_stops(l):
+    return [w for w in l if w.lower() not in stop]
 
 
-## data2.to_csv('out.csv', sep=';', encoding='utf-8')
-## data2.to_csv('out.csv', sep=';', encoding='latin-1')
+def generate_word_list(outfile):
+    biznames_lst = []
+    biznames_str = "" # has to be a string
+    with open(outfile, 'rb') as csvfile:
+        serialized_data = csv.reader(csvfile)
+        for row in serialized_data:
+            biznames_lst.append(row[0])
+            # biznames_str += " %s" % row[0]
+    remove_stops(biznames_lst)
+    return "".join(biznames_lst)
 
-writer = pd.ExcelWriter('out.xlsx')
-data2.to_excel(writer, 'Sheet1')
-writer.save()
+################ NLP STUFF ################
 
+tokens = nltk.word_tokenize(generate_word_list('out.csv'))
+text = nltk.Text(tokens)
+
+# print "Collocations: %s" % text.collocations()
+
+# print "Concordances Kebab: %s" % text.concordance("kebab")
+
+# print "Concordances Pizza: %s" % text.concordance("pizza")
+
+# print "Concordances Burger %s:" % text.concordance("burger")
+
+# print "Common contexts: %s" % text.common_contexts(["kebab", "pizza", "burger"])
+
+
+
+# bigram_measures = nltk.collocations.BigramAssocMeasures()
+# trigram_measures = nltk.collocations.TrigramAssocMeasures()
+# finder = nltk.collocations.BigramCollocationFinder.from_words(text)
+
+# finder.apply_freq_filter(2)
+
+# print finder.nbest(bigram_measures.pmi, 10) # doctest: +NORMALIZE_WHITESPACE
+
+
+################ CLOUD STUFF ###############
+
+tags = make_tags(get_tag_counts(generate_word_list('out.csv')), maxsize=120)
+
+create_tag_image(tags, 'cloud_large.png', size=(100, 100), fontname='Lobster')
+
+print "All done!"
